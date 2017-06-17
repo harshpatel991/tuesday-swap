@@ -22,20 +22,14 @@ class NavComponent extends Component {
             <div>
                 <Navbar color="faded" light toggleable>
                     <NavbarToggler right onClick={this.toggle} />
-                    <NavbarBrand href="/">reactstrap</NavbarBrand>
+                    <NavbarBrand href="/">Tuesday Swap</NavbarBrand>
                     <Collapse isOpen={this.state.isOpen} navbar>
                         <Nav className="ml-auto" navbar>
                             <NavItem>
-
-                                <Button
-                                    tag="a"
-                                    color="success"
-                                    size="large"
-                                    href="http://reactstrap.github.io"
-                                    target="_blank"
-                                >  Login
-                                </Button>
-
+                                <Button tag="a" color="success" href="http://reactstrap.github.io">Login</Button>
+                            </NavItem>
+                            <NavItem>
+                                <Button tag="a" color="primary" href="http://reactstrap.github.io">Register</Button>
                             </NavItem>
                             <NavItem>
                                 <NavLink href="/components/">Components</NavLink>
