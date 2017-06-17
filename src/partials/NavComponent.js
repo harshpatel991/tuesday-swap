@@ -30,7 +30,7 @@ class NavComponent extends Component {
                                 <Link className="btn btn-success" role="button" to="/login">Login</Link>
                             </NavItem>
                             <NavItem>
-                                <Link className="btn btn-primary" role="button" to="/login">Register</Link>
+                                <Link className="btn btn-primary" role="button" to="/register">Register</Link>
                             </NavItem>
                         </Nav>
                     </Collapse>

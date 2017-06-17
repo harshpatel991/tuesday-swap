@@ -1,15 +1,22 @@
-import React, {Component} from "react";
-import {Col, Container, Row} from "reactstrap";
+import React, {Component, PropTypes} from "react";
+import {Button, CardBlock, CardTitle, Col, Container, Input, Row} from "reactstrap";
+import {Link} from "react-router-dom";
 
 class LoginComponent extends Component {
     render() {
         return (
             <Container fluid="true" >
                 <Row>
-                    <Col className="text-center hero-background">
+                    <Col sm="12" md={{ size: 4, offset: 4 }}>
 
-                        <img className="mx-auto d-block" src="/images/swap-icon.png" width="100px"/>
-                        <h1>Login</h1>
+                        <h2>Login</h2>
+
+                        <form action="/" onSubmit="">
+                            <Input placeholder="email" onChange="" value="" />
+                            <Input placeholder="username" onChange="" value="" />
+                            <Button color="primary">Submit</Button>
+                            <p>Already have an account? <Link to={'/login'}>Log in</Link></p>
+                        </form>
 
                     </Col>
                 </Row>
