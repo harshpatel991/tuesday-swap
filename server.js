@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const sequelize = require('./database/db');
 
 const app = express();
 
@@ -25,9 +26,19 @@ app.route('/user/:userId')
         //TODO: insert
     });
 
-app.route('/application/:applicationSlug')
+app.route('/enrollment/:enrollmentSlug')
     .get(function (req, res) {
-        res.send('Get an application ' + req.params.applicationSlug);
+        res.send('Get an application ' + req.params.enrollmentSlug);
+
+        sequelize
+            .authenticate()
+            .then(() => {
+                console.log('Connection has been established successfully.');
+            })
+            .catch(err => {
+                console.error('Unable to connect to the database:', err);
+            });
+
         //TODO: get application
         //TODO: get codes
         //TODO: get seeking
@@ -36,12 +47,12 @@ app.route('/application/:applicationSlug')
         //TODO: do validation
         //TODO: authenticate the user
 
-        var createTimestamp = Date();
-        var lastUpdateTimestamp = Date();
-        var slug = "blah";
-        var application = { req.body.userId, req.body.contestId, req.body.shouldGiveAwayCodes, createTimestamp, lastUpdateTimestamp}
-        var codes = {};
-        var seeking = {};
+        // var createTimestamp = Date();
+        // var lastUpdateTimestamp = Date();
+        // var slug = "blah";
+        // var application = { req.body.userId, req.body.contestId, req.body.shouldGiveAwayCodes, createTimestamp, lastUpdateTimestamp}
+        // var codes = {};
+        // var seeking = {};
 
         //TODO: insert into database
     });

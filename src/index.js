@@ -9,6 +9,7 @@ import HomeComponent from "./pages/HomeComponent";
 import NotFoundComponent from "./pages/NotFoundComponent";
 import {Switch} from "react-router";
 import RegisterComponent from "./pages/RegisterComponent";
+import EnrollmentComponent from "./pages/EnrollmentComponent";
 
 
 ReactDOM.render(
@@ -18,6 +19,7 @@ ReactDOM.render(
             <Route exact path='/' component={HomeComponent}/>
             <Route exact path='/login' component={LoginComponent}/>
             <Route exact path='/register' component={RegisterComponent}/>
+            <Route exact path='/shareable/:enrollmentSlug' component={EnrollmentComponent}/>
             <Route path='*' component={NotFoundComponent}/>
             </Switch>
         </App>
