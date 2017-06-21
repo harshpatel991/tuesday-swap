@@ -77,7 +77,7 @@ app.route('/enrollment/:enrollmentSlug')
             }
         }).then(enrollment => {
             if (enrollment) {
-                res.send('Found enrollment for id: ' + req.params.enrollmentSlug + enrollment);
+                res.send(enrollment);
             } else {
                 //TODO: redirect away
                 res.send("bye bye");
