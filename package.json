@@ -5,23 +5,21 @@
   "dependencies": {
     "axios": "^0.16.2",
     "body-parser": "^1.17.2",
+    "bookshelf": "^0.10.3",
     "bootstrap": "^4.0.0-alpha.6",
     "express": "^4.15.3",
     "foreman": "^2.0.0",
     "marked": "^0.3.6",
     "mongoose": "^4.10.6",
     "nodemon": "^1.11.0",
-    "pg": "^6.2.4",
-    "pg-hstore": "^2.3.2",
+    "pg": "^6.4.0",
     "react": "^15.6.1",
     "react-addons-css-transition-group": "^15.6.0",
     "react-addons-transition-group": "^15.6.0",
     "react-dom": "^15.6.1",
     "react-router": "^4.1.1",
     "react-router-dom": "latest",
-    "reactstrap": "^4.6.2",
-    "sequelize": "^4.1.0",
-    "sequelize-cli": "^2.7.0"
+    "reactstrap": "^4.6.2"
   },
   "devDependencies": {
     "react-scripts": "1.0.7"

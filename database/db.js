@@ -1,12 +1,5 @@
-const Sequelize  = require("sequelize");
+var config = require('../knexfile.js');
+var env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
+var knex = require('knex')(config[env]);
 
-module.exports = new Sequelize('todo', 'postgres', 'postgres', {
-    host: 'localhost',
-    dialect: 'postgres',
-
-    pool: {
-        max: 5,
-        min: 0,
-        idle: 10000
-    },
-});
+module.exports = require('bookshelf')(knex);
