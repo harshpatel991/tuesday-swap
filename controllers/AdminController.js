@@ -1,6 +1,6 @@
 const User = require('../models/User');
 
-module.exports.getUser = function (req, res, next) {
+module.exports.getAdmin = function (req, res, next) {
     handleResponse(res, 200, 'success');
 };
 

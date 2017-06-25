@@ -1,7 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const session = require('express-session');
+const flash = require('connect-flash');
+const authHelpers = require('./auth/_helpers');
+const AuthController = require('./controllers/AuthController');
 const UserController = require('./controllers/UserController');
+const AdminController = require('./controllers/AdminController');
 const ContestController = require('./controllers/ContestController');
 const EnrollmentController = require('./controllers/EnrollmentController');
 
@@ -9,6 +15,18 @@ const app = express();
 
 // parse application/json
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+app.use(session({
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: true
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,14 +37,20 @@ app.use(function (req, res, next) {
     next();
 })
 
-app.route('/user/:userId').get(UserController.getUser);
-app.route('/user').post(UserController.postUser);
+app.route( '/auth/register').post(authHelpers.loginRedirect, AuthController.postRegister);
+app.route('/auth/login').post(authHelpers.loginRedirect, AuthController.postLogin);
+app.route('/auth/logout').get(authHelpers.loginRequired, AuthController.getLogout);
 
-app.route('/contest').post(ContestController.postContest);
+app.route('/user').get(authHelpers.loginRequired, UserController.getUser);
+app.route('/admin').get(authHelpers.adminRequired, AdminController.getAdmin);
 
-app.route('/enrollment/:enrollmentSlug').get(EnrollmentController.getEnrollment);
-app.route('/enrollment').post(EnrollmentController.postEnrollment);
+app.route('/contest').post( ContestController.postContest);
+
+app.route('/enrollment/:enrollmentSlug').get( EnrollmentController.getEnrollment);
+app.route('/enrollment').post( EnrollmentController.postEnrollment);
 
 app.listen(3001, function () {
     console.log('Example app listening on port 3001!')
 });
+
+module.exports = app;

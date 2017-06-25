@@ -1,6 +1,6 @@
-var bookshelf = require('../database/db');
+var db = require('../database/db');
 
-module.exports = bookshelf.Model.extend({
+module.exports = db.bookshelf.Model.extend({
     tableName: 'codes',
     hasTimestamps: true
 });
