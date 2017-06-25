@@ -7,7 +7,13 @@ module.exports = {
             password: 'postgres',
             database: 'todo'
         },
-        pool: {min: 5, max: 20}
+        pool: {min: 5, max: 20},
+        migrations: {
+            directory: __dirname + '/database/migrations'
+        },
+        seeds: {
+            directory: __dirname + '/database/seeds'
+        }
     },
     test: {
         client: 'pg',
@@ -16,6 +22,12 @@ module.exports = {
             user: 'postgres',
             password: 'postgres',
             database: 'todo_test'
+        },
+        migrations: {
+            directory: __dirname + '/database/migrations'
+        },
+        seeds: {
+            directory: __dirname + '/database/seeds'
         }
     },
 
@@ -27,7 +39,10 @@ module.exports = {
             password: process.env.DB_PASSWORD,
             database: process.env.DB_DATABASE
         },
-        pool: {min: 5, max: 20}
+        pool: {min: 5, max: 20},
+        migrations: {
+            directory: __dirname + '/database/migrations'
+        }
     }
 
 };
