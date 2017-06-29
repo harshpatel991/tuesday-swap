@@ -35,6 +35,7 @@ describe('routes : auth', () => {
                 .send({
                     email_address: 'newuser@test.com',
                     password: 'newuserpassword',
+                    password_confirm: 'newuserpassword',
                     reddit_username: 'new_user_reddit_username'
                 })
                 .end((err, res) =>  {
@@ -45,18 +46,20 @@ describe('routes : auth', () => {
                     res.body.status.should.eql('success');
                     done();
                 })
-        })
+        });
 
         it('should throw an error if a user is already logged in', (done) => {
             passportStub.login({
                 username: 'verified@test.com',
-                password: 'verified'
+                password: 'verified',
             });
             chai.request(server)
                 .post('/auth/register')
                 .send({
-                    username: 'verified@test.com',
-                    password: 'verified'
+                    email_address: 'verified@test.com',
+                    password: 'verified',
+                    password_confirm: 'verified',
+                    reddit_username: 'new_user_reddit_username'
                 })
                 .end((err, res) => {
                     should.exist(err);
@@ -64,6 +67,101 @@ describe('routes : auth', () => {
                     res.status.should.eql(401);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('You are already logged in');
+                    done();
+                });
+        });
+
+        it('should not register with empty email', (done) => {
+            chai.request(server)
+                .post('/auth/register')
+                .send({
+                    email_address: '',
+                    password: 'verified',
+                    password_confirm: 'verified',
+                    reddit_username: 'new_user_reddit_username'
+                })
+                .end((err, res) => {
+                    should.exist(err);
+                    res.redirects.length.should.eql(0);
+                    res.status.should.eql(400);
+                    res.type.should.eql('application/json');
+                    res.body.failures[0].msg.should.eql('Email address cannot be empty');
+                    done();
+                });
+        });
+
+        it('should not register with invalid email', (done) => {
+            chai.request(server)
+                .post('/auth/register')
+                .send({
+                    email_address: 'bademail',
+                    password: 'verified',
+                    password_confirm: 'verified',
+                    reddit_username: 'new_user_reddit_username'
+                })
+                .end((err, res) => {
+                    should.exist(err);
+                    res.redirects.length.should.eql(0);
+                    res.status.should.eql(400);
+                    res.type.should.eql('application/json');
+                    res.body.failures[0].msg.should.eql('Email address should be a valid email');
+                    done();
+                });
+        });
+
+        it('should not register with short password', (done) => {
+            chai.request(server)
+                .post('/auth/register')
+                .send({
+                    email_address: 'new_user@test.com',
+                    password: '',
+                    password_confirm: '',
+                    reddit_username: 'new_user_reddit_username'
+                })
+                .end((err, res) => {
+                    should.exist(err);
+                    res.redirects.length.should.eql(0);
+                    res.status.should.eql(400);
+                    res.type.should.eql('application/json');
+                    res.body.failures[0].msg.should.eql('Password must be at least 6 characters');
+                    done();
+                });
+        });
+
+        it('should not register if passwords do not match', (done) => {
+            chai.request(server)
+                .post('/auth/register')
+                .send({
+                    email_address: 'new_user@test.com',
+                    password: 'thispasswordwontmatch',
+                    password_confirm: 'thispassworddoesntmatch',
+                    reddit_username: 'new_user_reddit_username'
+                })
+                .end((err, res) => {
+                    should.exist(err);
+                    res.redirects.length.should.eql(0);
+                    res.status.should.eql(400);
+                    res.type.should.eql('application/json');
+                    res.body.failures[0].msg.should.eql('Passwords must match');
+                    done();
+                });
+        });
+
+        it('should not register if reddit username is empty', (done) => {
+            chai.request(server)
+                .post('/auth/register')
+                .send({
+                    email_address: 'new_user@test.com',
+                    password: 'password',
+                    password_confirm: 'password',
+                    reddit_username: ''
+                })
+                .end((err, res) => {
+                    should.exist(err);
+                    res.redirects.length.should.eql(0);
+                    res.status.should.eql(400);
+                    res.type.should.eql('application/json');
+                    res.body.failures[0].msg.should.eql('Reddit username cannot be empty');
                     done();
                 });
         });
@@ -78,7 +176,6 @@ describe('routes : auth', () => {
                     password: 'verified',
                 })
                 .end((err, res) => {
-                    console.log(err);
                     should.not.exist(err);
                     res.redirects.length.should.eql(0);
                     res.status.should.eql(200);
@@ -130,7 +227,7 @@ describe('routes : auth', () => {
             chai.request(server)
                 .post('/auth/login')
                 .send({
-                    username: 'verified@test.com',
+                    email_address: 'verified@test.com',
                     password: 'verified'
                 })
                 .end((err, res) => {
@@ -139,6 +236,54 @@ describe('routes : auth', () => {
                     res.status.should.eql(401);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('You are already logged in');
+                    done();
+                });
+        });
+
+        it('should fail with empty email', (done) => {
+            chai.request(server)
+                .post('/auth/login')
+                .send({
+                    email_address: '',
+                    password: 'verified',
+                })
+                .end((err, res) => {
+                    res.redirects.length.should.eql(0);
+                    res.status.should.eql(400);
+                    res.body.message.should.eql('Validation failed');
+                    res.body.failures[0].msg.should.eql('Email address cannot be empty');
+                    done();
+                });
+        });
+
+        it('should fail with invalid email', (done) => {
+            chai.request(server)
+                .post('/auth/login')
+                .send({
+                    email_address: 'invalidemail',
+                    password: 'verified',
+                })
+                .end((err, res) => {
+                    res.redirects.length.should.eql(0);
+                    res.status.should.eql(400);
+                    res.body.message.should.eql('Validation failed');
+                    res.body.failures[0].msg.should.eql('Email address should be a valid email');
+                    done();
+                });
+        });
+
+        it('should fail with empty password', (done) => {
+            chai.request(server)
+                .post('/auth/login')
+                .send({
+                    email_address: 'verified@test.com',
+                    password: '',
+                })
+                .end((err, res) => {
+                    res.redirects.length.should.eql(0);
+                    res.status.should.eql(400);
+                    res.body.message.should.eql('Validation failed');
+                    res.body.failures[0].msg.should.eql('Password cannot be be empty');
                     done();
                 });
         });
@@ -153,7 +298,6 @@ describe('routes : auth', () => {
             chai.request(server)
                 .get('/auth/logout')
                 .end((err, res) => {
-                    console.log(err);
                     should.not.exist(err);
                     res.redirects.length.should.eql(0);
                     res.status.should.eql(200);

@@ -5,6 +5,8 @@ const passport = require('passport');
 const session = require('express-session');
 const flash = require('connect-flash');
 const authHelpers = require('./auth/_helpers');
+const expressValidator = require('express-validator');
+const authValidator = require('./validators/auth-validator');
 const AuthController = require('./controllers/AuthController');
 const UserController = require('./controllers/UserController');
 const AdminController = require('./controllers/AdminController');
@@ -16,6 +18,7 @@ const app = express();
 // parse application/json
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressValidator());
 app.use(cookieParser());
 
 app.use(session({
@@ -37,8 +40,8 @@ app.use(function (req, res, next) {
     next();
 })
 
-app.route( '/auth/register').post(authHelpers.loginRedirect, AuthController.postRegister);
-app.route('/auth/login').post(authHelpers.loginRedirect, AuthController.postLogin);
+app.route( '/auth/register').post(authHelpers.loginRedirect, authValidator.validatePostRegister, AuthController.postRegister);
+app.route('/auth/login').post(authHelpers.loginRedirect, authValidator.validatePostLogin, AuthController.postLogin);
 app.route('/auth/logout').get(authHelpers.loginRequired, AuthController.getLogout);
 
 app.route('/user').get(authHelpers.loginRequired, UserController.getUser);
