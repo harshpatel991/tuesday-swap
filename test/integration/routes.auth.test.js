@@ -1,5 +1,6 @@
 process.env.NODE_ENV = 'test';
 process.env.SECRET_KEY = 'fake';
+process.env.SECURE_COOKIE = false;
 
 const chai = require('chai');
 const should = chai.should();
@@ -7,23 +8,24 @@ const chaiHttp = require('chai-http');
 const passportStub = require('passport-stub');
 const server = require('../../server');
 const knex = require('../../database/db').knex;
+const User = require('../../models/User');
 
 chai.use(chaiHttp);
 passportStub.install(server);
 
 describe('routes : auth', () => {
-    beforeEach(function() {
-        return knex.migrate.rollback().then( () => {
-            return knex.migrate.latest().then( () => {
+    beforeEach(function () {
+        return knex.migrate.rollback().then(() => {
+            return knex.migrate.latest().then(() => {
                 return knex.seed.run();
             });
         })
     });
 
-    afterEach(function(done) {
+    afterEach(function (done) {
         passportStub.logout();
         knex.migrate.rollback()
-            .then(function() {
+            .then(function () {
                 done();
             });
     });
@@ -38,21 +40,25 @@ describe('routes : auth', () => {
                     password_confirm: 'newuserpassword',
                     reddit_username: 'new_user_reddit_username'
                 })
-                .end((err, res) =>  {
+                .end((err, res) => {
                     should.not.exist(err);
                     res.redirects.length.should.eql(0);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
-                    res.body.status.should.eql('success');
+                    res.body.status.should.eql('Success');
                     done();
                 })
         });
 
         it('should throw an error if a user is already logged in', (done) => {
-            passportStub.login({
-                username: 'verified@test.com',
-                password: 'verified',
-            });
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified',
+                    admin: false
+                })
+            );
             chai.request(server)
                 .post('/auth/register')
                 .send({
@@ -180,7 +186,7 @@ describe('routes : auth', () => {
                     res.redirects.length.should.eql(0);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
-                    res.body.status.should.eql('success');
+                    res.body.status.should.eql('Success');
                     done();
                 });
         });
@@ -220,10 +226,14 @@ describe('routes : auth', () => {
         });
 
         it('should throw an error if a user is logged in', (done) => {
-            passportStub.login({
-                username: 'verified@test.com',
-                password: 'verified'
-            });
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified',
+                    admin: false
+                })
+            );
             chai.request(server)
                 .post('/auth/login')
                 .send({
@@ -291,10 +301,14 @@ describe('routes : auth', () => {
 
     describe('GET /auth/logout', () => {
         it('should logout a user', (done) => {
-            passportStub.login({
-                username: 'verified@test.com',
-                password: 'verified'
-            });
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified',
+                    admin: false
+                })
+            );
             chai.request(server)
                 .get('/auth/logout')
                 .end((err, res) => {
@@ -302,7 +316,7 @@ describe('routes : auth', () => {
                     res.redirects.length.should.eql(0);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
-                    res.body.status.should.eql('success');
+                    res.body.status.should.eql('Success');
                     done();
                 });
         });
@@ -323,18 +337,23 @@ describe('routes : auth', () => {
 
     describe('GET /user', () => {
         it('should return a success when logged in', (done) => {
-            passportStub.login({
-                username: 'verified@test.com',
-                password: 'verified'
-            });
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified',
+                    admin: false
+                })
+            );
             chai.request(server)
                 .get('/user')
                 .end((err, res) => {
+                    console.log(res.body);
                     should.not.exist(err);
                     res.redirects.length.should.eql(0);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
-                    res.body.status.should.eql('success');
+                    res.body.user.should.eql(3);
                     done();
                 });
         });
@@ -352,10 +371,14 @@ describe('routes : auth', () => {
         });
 
         it('should throw an error if a user logs in and then logs out', (done) => {
-            passportStub.login({
-                username: 'verified@test.com',
-                password: 'verified'
-            });
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified',
+                    admin: false
+                })
+            );
             passportStub.logout();
             chai.request(server)
                 .get('/user')
@@ -372,18 +395,24 @@ describe('routes : auth', () => {
 
     describe('GET /admin', () => {
         it('should return a success when logged in as admin', (done) => {
-            passportStub.login({
-                username: 'admin@test.com',
-                password: 'admin'
-            });
+            passportStub.login(
+                new User({
+                    id: 1,
+                    username: 'admin@test.com',
+                    password: 'admin',
+                    admin: true
+                })
+            );
             chai.request(server)
                 .get('/admin')
                 .end((err, res) => {
+                    // console.log(err);
                     should.not.exist(err);
                     res.redirects.length.should.eql(0);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
-                    res.body.status.should.eql('success');
+                    console.log(res.body);
+                    res.body.user.should.eql(1);
                     done();
                 });
         });
@@ -400,10 +429,14 @@ describe('routes : auth', () => {
                 });
         });
         it('should throw an error if a user is not an admin', (done) => {
-            passportStub.login({
-                username: 'verified@test.com',
-                password: 'verified'
-            });
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified',
+                    admin: false
+                })
+            );
             chai.request(server)
                 .get('/admin')
                 .end((err, res) => {
