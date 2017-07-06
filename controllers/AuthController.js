@@ -14,7 +14,9 @@ module.exports.postRegister = function (req, res, next) {
             })(req, res, next);
             return null;
         })
-        .catch((err) => { console.log(err); handleResponse(res, 500, err); });
+        .catch((err) => {
+            handleResponse(res, 500, "Database error");
+        });
 };
 
 module.exports.postLogin = function (req, res, next) {
@@ -30,12 +32,14 @@ module.exports.getLogout = function (req, res, next) {
 
 function handleLogin(req, res, err, user, info) {
     if (err) {
-        res.status(500).json({ status: 'Error' + err });
+        handleResponse(res, 500, 'Error');
     } else if (!user) {
-        res.status(404).json({ status : 'User not found' });
+        handleResponse(res, 404, 'User not found');
     } else {
         req.logIn(user, function (err) { //create the session
-            if (err) { handleResponse(res, 500, 'error'); }
+            if (err) {
+                handleResponse(res, 500, 'Error');
+            }
             handleResponse(res, 200, 'Success');
         });
     }

@@ -1,18 +1,20 @@
 const Contest = require('../models/Contest');
+const moment = require("moment");
 
 module.exports.postContest = function (req, res) {
-    //TODO: authentication, allow only admins
-    //TODO: validation
-
     new Contest({
-        name: 'Tmobile Tuesday 7/16',
-        description: "Trade your tmobile codes for the week of 7/16", //TODO: get from req.body
-        end_at: new Date() //TODO: fill in
+        name: req.body.name,
+        description: req.body.description,
+        end_at: moment(req.body.end_at)
     })
         .save().then(contest => {
-        res.send("saved contest");
-    })
+            handleResponse(res, 201, { status: "Success", contest: contest.id})
+        })
         .catch(error => {
-            res.send("failed contest" + error);
+            handleResponse(res, 500, "Database error")
         });
 };
+
+function handleResponse(res, code, body) {
+    res.status(code).json(body);
+}

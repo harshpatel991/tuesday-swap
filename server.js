@@ -7,7 +7,8 @@ const FileStore = require('session-file-store')(session);
 const flash = require('connect-flash');
 const authHelpers = require('./auth/_helpers');
 const expressValidator = require('express-validator');
-const authValidator = require('./validators/auth-validator');
+const AuthValidator = require('./validators/auth-validator');
+const ContestValidator = require('./validators/ContestValidator');
 const AuthController = require('./controllers/AuthController');
 const UserController = require('./controllers/UserController');
 const AdminController = require('./controllers/AdminController');
@@ -20,7 +21,13 @@ const app = express();
 // parse application/json
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(session({ secret: process.env.SECRET_KEY, store: new FileStore({}), resave: false, saveUninitialized: false, cookie: { path: '/', httpOnly: true, secure: process.env.SECURE_COOKIE, maxAge: null }  }));
+app.use(session({
+    secret: process.env.SECRET_KEY,
+    store: new FileStore({}),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {path: '/', httpOnly: true, secure: process.env.SECURE_COOKIE, maxAge: null}
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(expressValidator());
@@ -34,17 +41,17 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.route( '/auth/register').post(authHelpers.loginRedirect, authValidator.validatePostRegister, AuthController.postRegister);
-app.route('/auth/login').post(authHelpers.loginRedirect, authValidator.validatePostLogin, AuthController.postLogin);
+app.route('/auth/register').post(authHelpers.loginRedirect, AuthValidator.validatePostRegister, AuthController.postRegister);
+app.route('/auth/login').post(authHelpers.loginRedirect, AuthValidator.validatePostLogin, AuthController.postLogin);
 app.route('/auth/logout').get(authHelpers.loginRequired, AuthController.getLogout);
 
 app.route('/user').get(authHelpers.loginRequired, UserController.getUser);
 app.route('/admin').get(authHelpers.loginRequired, authHelpers.adminRequired, AdminController.getAdmin);
 
-app.route('/contest').post( ContestController.postContest);
+app.route('/contest').post(authHelpers.loginRequired, authHelpers.adminRequired, ContestValidator.validatePostContest, ContestController.postContest);
 
-app.route('/enrollment/:enrollmentSlug').get( EnrollmentController.getEnrollment);
-app.route('/enrollment').post( EnrollmentController.postEnrollment);
+app.route('/enrollment/:enrollmentSlug').get(EnrollmentController.getEnrollment);
+app.route('/enrollment').post(EnrollmentController.postEnrollment);
 
 app.listen(3001, function () {
     console.log('Example app listening on port 3001!')
