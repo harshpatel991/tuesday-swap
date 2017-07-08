@@ -1,6 +1,7 @@
 process.env.NODE_ENV = 'test';
 process.env.SECRET_KEY = 'fake';
 process.env.SECURE_COOKIE = false;
+process.env.EXPRESS_PORT = 4001;
 
 const chai = require('chai');
 const should = chai.should();
@@ -24,10 +25,7 @@ describe('routes : auth', () => {
 
     afterEach(function (done) {
         passportStub.logout();
-        knex.migrate.rollback()
-            .then(function () {
-                done();
-            });
+        done();
     });
 
     describe('POST /auth/register', () => {
@@ -42,7 +40,6 @@ describe('routes : auth', () => {
                 })
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Success');
@@ -69,7 +66,6 @@ describe('routes : auth', () => {
                 })
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(401);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('You are already logged in');
@@ -88,7 +84,6 @@ describe('routes : auth', () => {
                 })
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(400);
                     res.type.should.eql('application/json');
                     res.body.failures[0].msg.should.eql('Email address cannot be empty');
@@ -107,7 +102,6 @@ describe('routes : auth', () => {
                 })
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(400);
                     res.type.should.eql('application/json');
                     res.body.failures[0].msg.should.eql('Email address should be a valid email');
@@ -126,7 +120,6 @@ describe('routes : auth', () => {
                 })
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(400);
                     res.type.should.eql('application/json');
                     res.body.failures[0].msg.should.eql('Password must be at least 6 characters');
@@ -145,7 +138,6 @@ describe('routes : auth', () => {
                 })
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(400);
                     res.type.should.eql('application/json');
                     res.body.failures[0].msg.should.eql('Passwords must match');
@@ -164,7 +156,6 @@ describe('routes : auth', () => {
                 })
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(400);
                     res.type.should.eql('application/json');
                     res.body.failures[0].msg.should.eql('Reddit username cannot be empty');
@@ -183,7 +174,6 @@ describe('routes : auth', () => {
                 })
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Success');
@@ -200,7 +190,6 @@ describe('routes : auth', () => {
                 })
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(404);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('User not found');
@@ -217,7 +206,6 @@ describe('routes : auth', () => {
                 })
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(404);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('User not found');
@@ -242,7 +230,6 @@ describe('routes : auth', () => {
                 })
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(401);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('You are already logged in');
@@ -258,7 +245,6 @@ describe('routes : auth', () => {
                     password: 'verified',
                 })
                 .end((err, res) => {
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(400);
                     res.body.message.should.eql('Validation failed');
                     res.body.failures[0].msg.should.eql('Email address cannot be empty');
@@ -274,7 +260,6 @@ describe('routes : auth', () => {
                     password: 'verified',
                 })
                 .end((err, res) => {
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(400);
                     res.body.message.should.eql('Validation failed');
                     res.body.failures[0].msg.should.eql('Email address should be a valid email');
@@ -290,7 +275,6 @@ describe('routes : auth', () => {
                     password: '',
                 })
                 .end((err, res) => {
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(400);
                     res.body.message.should.eql('Validation failed');
                     res.body.failures[0].msg.should.eql('Password cannot be be empty');
@@ -313,7 +297,6 @@ describe('routes : auth', () => {
                 .get('/auth/logout')
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Success');
@@ -326,7 +309,6 @@ describe('routes : auth', () => {
                 .get('/auth/logout')
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(401);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Please log in');
@@ -350,7 +332,6 @@ describe('routes : auth', () => {
                 .end((err, res) => {
                     console.log(res.body);
                     should.not.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
                     res.body.user.should.eql(3);
@@ -362,7 +343,6 @@ describe('routes : auth', () => {
                 .get('/user')
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(401);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Please log in');
@@ -384,7 +364,6 @@ describe('routes : auth', () => {
                 .get('/user')
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(401);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Please log in');
@@ -408,7 +387,6 @@ describe('routes : auth', () => {
                 .end((err, res) => {
                     // console.log(err);
                     should.not.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
                     console.log(res.body);
@@ -421,7 +399,6 @@ describe('routes : auth', () => {
                 .get('/admin')
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(401);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Please log in');
@@ -441,7 +418,6 @@ describe('routes : auth', () => {
                 .get('/admin')
                 .end((err, res) => {
                     should.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(401);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Not an admin');

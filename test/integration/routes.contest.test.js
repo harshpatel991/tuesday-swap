@@ -1,6 +1,7 @@
 process.env.NODE_ENV = 'test';
 process.env.SECRET_KEY = 'fake';
 process.env.SECURE_COOKIE = false;
+process.env.EXPRESS_PORT = 4001;
 
 const chai = require('chai');
 const should = chai.should();
@@ -26,10 +27,7 @@ describe('routes : contest', () => {
 
     afterEach(function (done) {
         passportStub.logout();
-        knex.migrate.rollback()
-            .then(function () {
-                done();
-            });
+        done();
     });
 
     describe('POST /contest', () => {
@@ -51,7 +49,6 @@ describe('routes : contest', () => {
                 })
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(201);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Success');
@@ -106,7 +103,6 @@ describe('routes : contest', () => {
                     end_at: "3017-06-25 15:13:26.000-00"
                 })
                 .end((err, res) => {
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(401);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Please log in');
@@ -130,7 +126,6 @@ describe('routes : contest', () => {
                     end_at: "3017-06-25 15:13:26.000-00"
                 })
                 .end((err, res) => {
-                    res.redirects.length.should.eql(0);
                     res.status.should.eql(401);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Not an admin');

@@ -9,6 +9,9 @@ const authHelpers = require('./auth/_helpers');
 const expressValidator = require('express-validator');
 const AuthValidator = require('./validators/auth-validator');
 const ContestValidator = require('./validators/ContestValidator');
+const EnrollmentValidator = require('./validators/EnrollmentValidator');
+const CodeValidator = require('./validators/CodeValidator');
+
 const AuthController = require('./controllers/AuthController');
 const UserController = require('./controllers/UserController');
 const AdminController = require('./controllers/AdminController');
@@ -51,10 +54,10 @@ app.route('/admin').get(authHelpers.loginRequired, authHelpers.adminRequired, Ad
 app.route('/contest').post(authHelpers.loginRequired, authHelpers.adminRequired, ContestValidator.validatePostContest, ContestController.postContest);
 
 app.route('/enrollment/:enrollmentSlug').get(EnrollmentController.getEnrollment);
-app.route('/enrollment').post(EnrollmentController.postEnrollment);
+app.route('/enrollment').post(/*authHelpers.loginRequired, */EnrollmentValidator.validatePostEnrollment, CodeValidator.validatePostCode, EnrollmentController.postEnrollment);
 
-app.listen(3001, function () {
-    console.log('Example app listening on port 3001!')
+app.listen(process.env.EXPRESS_PORT, function () {
+    console.log('Example app listening on port ' + process.env.EXPRESS_PORT)
 });
 
 module.exports = app;
