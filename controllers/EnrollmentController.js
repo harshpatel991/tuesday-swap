@@ -61,6 +61,7 @@ module.exports.postEnrollment = function (req, res) {
             })
             .then(t.commit)
             .catch(err => {
+                throw new Error("Transaction Failed: " + err);
                 t.rollback
             })
     })

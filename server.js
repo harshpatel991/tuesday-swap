@@ -54,7 +54,7 @@ app.route('/admin').get(authHelpers.loginRequired, authHelpers.adminRequired, Ad
 app.route('/contest').post(authHelpers.loginRequired, authHelpers.adminRequired, ContestValidator.validatePostContest, ContestController.postContest);
 
 app.route('/enrollment/:enrollmentSlug').get(EnrollmentController.getEnrollment);
-app.route('/enrollment').post(/*authHelpers.loginRequired, */EnrollmentValidator.validatePostEnrollment, CodeValidator.validatePostCode, EnrollmentController.postEnrollment);
+app.route('/enrollment').post(authHelpers.loginRequired, EnrollmentValidator.validatePostEnrollment, CodeValidator.validatePostCode, EnrollmentController.postEnrollment);
 
 app.listen(process.env.EXPRESS_PORT, function () {
     console.log('Example app listening on port ' + process.env.EXPRESS_PORT)

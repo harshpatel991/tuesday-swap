@@ -1,6 +1,5 @@
 process.env.NODE_ENV = 'test';
 process.env.SECRET_KEY = 'fake';
-process.env.SECURE_COOKIE = false;
 process.env.EXPRESS_PORT = 4001;
 
 const chai = require('chai');
@@ -18,7 +17,7 @@ const moment = require("moment");
 chai.use(chaiHttp);
 passportStub.install(server);
 
-describe('routes : contest', () => {
+describe('routes : enrollment', () => {
     beforeEach(function () {
         return knex.migrate.rollback().then(() => {
             return knex.migrate.latest().then(() => {
@@ -44,24 +43,24 @@ describe('routes : contest', () => {
             chai.request(server)
                 .post('/enrollment')
                 .send({
-                    contest_id: 2,
+                    contest_id: 4,
                     should_give_away_codes: true,
                     codes: [
                         {
-                            code_type_id: 1,
+                            code_type_id: 9,
                             code: "this_is_a_code1"
                         },
                         {
-                            code_type_id: 2,
+                            code_type_id: 10,
                             code: "this_is_a_code2"
                         },
                         {
-                            code_type_id: 3,
+                            code_type_id: 11,
                             code: "this_is_a_code3"
                         }
                     ],
                     seeking: [
-                        4, 5, 6
+                        12, 13
                     ]
 
                 })
@@ -75,22 +74,22 @@ describe('routes : contest', () => {
                         .then((enrollment) => {
                             enrollment = enrollment.toJSON();
                             enrollment.user_id.should.eql(3);
-                            enrollment.contest_id.should.eql(2);
+                            enrollment.contest_id.should.eql(4);
                             enrollment.should_give_away_codes.should.eql(true);
 
                             enrollment.codes.length.should.eql(3);
                             enrollment.codes.forEach((code, codeIndex)=> {
                                 code.enrollment_id.should.eql(res.body.enrollmentId);
-                                code.code_type_id.should.eql(codeIndex+1);
+                                code.code_type_id.should.eql(codeIndex+9);
                                 code.code.should.eql("this_is_a_code" + (codeIndex+1));
                                 code.taken.should.eql(false);
                                 should.equal(code.taken_by, null);
                             });
 
-                            enrollment.seekings.length.should.eql(3);
+                            enrollment.seekings.length.should.eql(2);
                             enrollment.seekings.forEach((seeking, seekingIndex)=> {
                                 seeking.enrollment_id.should.eql(res.body.enrollmentId);
-                                seeking.code_type_id.should.eql(seekingIndex+4);
+                                seeking.code_type_id.should.eql(seekingIndex+12);
                                 seeking.num_times_satisfied.should.eql(0);
                             });
                             done();
@@ -105,11 +104,11 @@ describe('routes : contest', () => {
             chai.request(server)
                 .post('/enrollment')
                 .send({
-                    contest_id: 1,
+                    contest_id: 4,
                     should_give_away_codes: true,
                     codes: [
                         {
-                            code_type_id: 1,
+                            code_type_id: 9,
                             code: "this_is_a_code1"
                         }
                     ],
@@ -134,15 +133,15 @@ describe('routes : contest', () => {
             chai.request(server)  //this one should succeed
                 .post('/enrollment')
                 .send({
-                    contest_id: 2,
+                    contest_id: 4,
                     should_give_away_codes: true,
                     codes: [
                         {
-                            code_type_id: 1,
+                            code_type_id: 9,
                             code: "this_is_a_code1"
                         }
                     ],
-                    seeking: [ 4 ]
+                    seeking: [ 10 ]
                 })
                 .end((err, res) => {
                     res.status.should.eql(201);
@@ -150,27 +149,70 @@ describe('routes : contest', () => {
                     chai.request(server)  //this one should fail
                         .post('/enrollment')
                         .send({
-                            contest_id: 2,
+                            contest_id: 4,
                             should_give_away_codes: true,
                             codes: [
                                 {
-                                    code_type_id: 2,
+                                    code_type_id: 9,
                                     code: "this_is_another_code2"
                                 }
                             ],
-                            seeking: [ 5 ]
+                            seeking: [ 10 ]
                         })
                         .end((err, res2) => {
                             res2.status.should.eql(409);
                             res2.body.failures[0].should.eql('Already enrolled in this contest');
                             done()
                         })
-
                 });
-
         });
 
         it('should allow enrolling a user in two different contests', (done) => {
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified'
+                })
+            );
+            chai.request(server)
+                .post('/enrollment')
+                .send({
+                    contest_id: 4,
+                    should_give_away_codes: true,
+                    codes: [
+                        {
+                            code_type_id: 9,
+                            code: "this_is_a_code1"
+                        }
+                    ],
+                    seeking: [ 10 ]
+                })
+                .end((err, res) => {
+                    res.status.should.eql(201);
+
+                    chai.request(server)
+                        .post('/enrollment')
+                        .send({
+                            contest_id: 5,
+                            should_give_away_codes: true,
+                            codes: [
+                                {
+                                    code_type_id: 14,
+                                    code: "this_is_another_code8"
+                                }
+                            ],
+                            seeking: [ 15 ]
+                        })
+                        .end((err, res2) => {
+                            res2.status.should.eql(201);
+                            done()
+                        })
+                });
+        });
+
+
+        it('should throw an error if the code type ids are not for the contest', (done) => {
             passportStub.login(
                 new User({
                     id: 3,
@@ -185,47 +227,216 @@ describe('routes : contest', () => {
                     should_give_away_codes: true,
                     codes: [
                         {
-                            code_type_id: 1,
-                            code: "this_is_a_code1"
+                            code_type_id: 7,
+                            code: "this_is_a_code7"
+                        },
+                        {
+                            code_type_id: 8, // This one is not part of the contest
+                            code: "this_is_a_code8"
                         }
                     ],
                     seeking: [ 4 ]
                 })
                 .end((err, res) => {
-                    res.status.should.eql(201);
-
-                    chai.request(server)
-                        .post('/enrollment')
-                        .send({
-                            contest_id: 3,
-                            should_give_away_codes: true,
-                            codes: [
-                                {
-                                    code_type_id: 8,
-                                    code: "this_is_another_code8"
-                                }
-                            ],
-                            seeking: [ 5 ]
-                        })
-                        .end((err, res2) => {
-                            res2.status.should.eql(201);
-                            done()
-                        })
+                    res.status.should.eql(400);
+                    res.type.should.eql('application/json');
+                    res.body.failures[0].should.eql('Found a Code Type Id does that not belong to this contest');
+                    done();
                 });
         });
 
-        // TODO: verify the the codeTypeIds and seeking belong to the contestId
+        it('should throw an error if the seeking code type ids are not for the contest', (done) => {
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified'
+                })
+            );
+            chai.request(server)
+                .post('/enrollment')
+                .send({
+                    contest_id: 5,
+                    should_give_away_codes: true,
+                    codes: [
+                        {
+                            code_type_id: 15,
+                            code: "this_is_a_code7"
+                        }
+                    ],
+                    seeking: [ 14, 15, 16 ] // 16 is not part of the contest
+                })
+                .end((err, res) => {
+                    res.status.should.eql(400);
+                    res.type.should.eql('application/json');
+                    res.body.failures[0].should.eql('Found a Seeking Code Type Id does that not belong to this contest');
+                    done();
+                });
+        });
 
-        //TODO: verify the contest is still active
+        it('should throw an error contest id is invalid', (done) => {
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified'
+                })
+            );
+            chai.request(server)
+                .post('/enrollment')
+                .send({
+                    contest_id: 5000,
+                    should_give_away_codes: true,
+                    codes: [ {
+                        code_type_id: 15,
+                        code: "this_is_a_code15"
+                    } ],
+                    seeking: [ ]
+                })
+                .end((err, res) => {
+                    res.status.should.eql(500);
+                    done();
+                });
+        });
 
-        //TODO: add with no codes
+        it('should throw an error contest id is not present', (done) => {
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified'
+                })
+            );
+            chai.request(server)
+                .post('/enrollment')
+                .send({
+                    should_give_away_codes: true,
+                    codes: [ ],
+                    seeking: [ ]
+                })
+                .end((err, res) => {
+                    res.status.should.eql(400);
+                    res.type.should.eql('application/json');
+                    res.body.failures[0].msg.should.eql('Contest Id cannot be empty');
+                    res.body.failures[1].msg.should.eql('Contest Id cannot be an integer');
 
-        //TODO: add with no codes but with code types
+                    done();
+                });
+        });
 
-        //TODO: add with no seeking
+        it('should add enrollment even if seeking is empty', (done) => {
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified'
+                })
+            );
+            chai.request(server)
+                .post('/enrollment')
+                .send({
+                    contest_id: 5,
+                    should_give_away_codes: true,
+                    codes: [
+                        {
+                            code_type_id: 15,
+                            code: "this_is_a_code7"
+                        }
+                    ],
+                    seeking: []
+                })
+                .end((err, res) => {
+                    res.status.should.eql(201);
+                    done();
+                });
+        });
 
-        //TODO: add with no contest id
+        it('should throw an error if codes is empty', (done) => {
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified'
+                })
+            );
+            chai.request(server)
+                .post('/enrollment')
+                .send({
+                    contest_id: 5,
+                    should_give_away_codes: true,
+                    codes: [ ],
+                    seeking:  [14]
+                })
+                .end((err, res) => {
+                    res.status.should.eql(400);
+                    res.body.failures[0].should.eql('Must submit at least one code');
+                    done();
+                });
+        });
 
+        it('should throw an error if code type is not present', (done) => {
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified'
+                })
+            );
+            chai.request(server)
+                .post('/enrollment')
+                .send({
+                    contest_id: 5,
+                    should_give_away_codes: true,
+                    codes: [
+                        {
+                            code: "this_is_a_code15"
+                        },
+                        {
+                            code_type_id: 15,
+                            code: "this_is_a_code15"
+                        },
+                        {
+                            code_type_id: "blah",
+                            code: "this_is_a_code15"
+                        }
+                    ],
+                    seeking:  [14]
+                })
+                .end((err, res) => {
+                    res.status.should.eql(400);
+                    res.body.failures[0].should.eql("Index: 0: Code Type Id should be an integer");
+                    res.body.failures[1].should.eql("Index: 2: Code Type Id should be an integer");
+                    done();
+                });
+        });
+
+        it('should throw an error if the contest has ended', (done) => {
+            passportStub.login(
+                new User({
+                    id: 3,
+                    username: 'verified@test.com',
+                    password: 'verified'
+                })
+            );
+            chai.request(server)
+                .post('/enrollment')
+                .send({
+                    contest_id: 6,
+                    should_give_away_codes: true,
+                    codes: [
+                        {
+                            code_type_id: 15,
+                            code: "this_is_a_code15"
+                        }
+                    ],
+                    seeking:  [14]
+                })
+                .end((err, res) => {
+                    res.status.should.eql(400);
+                    res.body.failures[0].should.eql("Contest has ended");
+                    done();
+                });
+        });
     });
 
 });

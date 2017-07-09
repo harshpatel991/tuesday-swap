@@ -1,6 +1,5 @@
 process.env.NODE_ENV = 'test';
 process.env.SECRET_KEY = 'fake';
-process.env.SECURE_COOKIE = false;
 process.env.EXPRESS_PORT = 4001;
 
 const chai = require('chai');
