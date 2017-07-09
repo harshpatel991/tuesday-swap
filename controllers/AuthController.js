@@ -40,7 +40,7 @@ function handleLogin(req, res, err, user, info) {
             if (err) {
                 handleResponse(res, 500, 'Error');
             }
-            handleResponse(res, 200, 'Success Login');
+            handleResponse(res, 200, 'Success');
         });
     }
 }

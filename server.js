@@ -29,7 +29,7 @@ app.use(session({
     store: new FileStore({}),
     resave: false,
     saveUninitialized: false,
-    cookie: {path: '/', httpOnly: true, secure: process.env.SECURE_COOKIE, maxAge: null}
+    cookie: {path: '/', httpOnly: true, secure: process.env.NODE_ENV === "production"}
 }));
 app.use(passport.initialize());
 app.use(passport.session());

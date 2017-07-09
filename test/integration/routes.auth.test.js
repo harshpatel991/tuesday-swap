@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 passportStub.install(server);
 
 describe('routes : auth', () => {
-    beforeEach(function () {
+    before(function () {
         return knex.migrate.rollback().then(() => {
             return knex.migrate.latest().then(() => {
                 return knex.seed.run();
@@ -29,7 +29,8 @@ describe('routes : auth', () => {
     });
 
     describe('POST /auth/register', () => {
-        it('should register a new user', (done) => {
+        let registerCookie;
+        it('should register a new user and set the authenticated token', (done) => {
             chai.request(server)
                 .post('/auth/register')
                 .send({
@@ -43,8 +44,20 @@ describe('routes : auth', () => {
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Success');
+                    registerCookie = res.headers['set-cookie'].pop().split(';')[0];
                     done();
                 })
+        });
+        it('should see the newly registered user as authenticated', (done) => {
+            var req = chai.request(server).get('/user');
+            req.set('Cookie', registerCookie);
+            req.end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.user.should.eql(4);
+                    done();
+                });
         });
 
         it('should throw an error if a user is already logged in', (done) => {
@@ -165,6 +178,7 @@ describe('routes : auth', () => {
     })
 
     describe('POST /auth/login', () => {
+        let loginCookie;
         it('should login a verified user', (done) => {
             chai.request(server)
                 .post('/auth/login')
@@ -177,8 +191,21 @@ describe('routes : auth', () => {
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Success');
+                    loginCookie = res.headers['set-cookie'].pop().split(';')[0];
                     done();
                 });
+        });
+
+        it('should see the newly logged in user as authenticated', (done) => {
+            let req = chai.request(server).get('/user');
+            req.set('Cookie', loginCookie);
+            req.end((err, res) => {
+                should.not.exist(err);
+                res.status.should.eql(200);
+                res.type.should.eql('application/json');
+                res.body.user.should.eql(3);
+                done();
+            });
         });
 
         it('should not login an unregistered user', (done) => {
@@ -330,7 +357,6 @@ describe('routes : auth', () => {
             chai.request(server)
                 .get('/user')
                 .end((err, res) => {
-                    console.log(res.body);
                     should.not.exist(err);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
@@ -385,11 +411,9 @@ describe('routes : auth', () => {
             chai.request(server)
                 .get('/admin')
                 .end((err, res) => {
-                    // console.log(err);
                     should.not.exist(err);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
-                    console.log(res.body);
                     res.body.user.should.eql(1);
                     done();
                 });
