@@ -1,7 +1,7 @@
 exports.up = function(knex, Promise) {
     return knex.schema.createTable('seekings', (table) => {
         table.increments('id').primary();
-        table.integer('enrollment_id').notNullable().references('enrollments.id');
+        table.integer('enrollment_id').notNullable().references('enrollments.id'); //TODO: add index
         table.integer('code_type_id').notNullable().references('code_types.id');
         table.integer('num_times_satisfied').notNullable().defaultTo(0);
         table.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));

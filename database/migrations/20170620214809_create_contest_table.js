@@ -2,6 +2,7 @@ exports.up = function(knex, Promise) {
     return knex.schema.createTable('contests', (table) => {
         table.increments('id').primary();
         table.string('name').notNullable();
+        table.string('slug').notNullable();
         table.string('description').notNullable();
         table.timestamp('end_at').notNullable();
         table.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));

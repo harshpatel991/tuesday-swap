@@ -1,6 +1,7 @@
 exports.seed = function(knex, Promise) {
     return knex('contests').insert({
             name: 'Contest1',
+            slug: 'contest1',
             description: 'Description 1',
             end_at: '3017-06-25 15:13:26-00'
         })
@@ -68,6 +69,7 @@ exports.seed = function(knex, Promise) {
         .then(function() {
             return knex('contests').insert({
                 name: 'Contest2',
+                slug: 'contest2',
                 description: 'Description 2',
                 end_at: '2025-06-25 15:13:26-00'
             })
@@ -86,6 +88,7 @@ exports.seed = function(knex, Promise) {
         .then(function() {
             return knex('contests').insert({
                 name: 'Contest3',
+                slug: 'contest3',
                 description: 'Description 3',
                 end_at: '2025-06-25 15:13:26-00'
             })
@@ -104,6 +107,7 @@ exports.seed = function(knex, Promise) {
         .then(function() {
             return knex('contests').insert({
                 name: 'Contest4',
+                slug: 'contest4',
                 description: 'Description 4',
                 end_at: '2025-06-25 15:13:26-00'
             })
@@ -162,6 +166,7 @@ exports.seed = function(knex, Promise) {
         .then(function() {
             return knex('contests').insert({
                 name: 'Contest5',
+                slug: 'contest5',
                 description: 'Description 5',
                 end_at: '2025-06-25 15:13:26-00'
             })
@@ -191,6 +196,7 @@ exports.seed = function(knex, Promise) {
         .then(function() {
             return knex('contests').insert({ // a contest that has already expired
                 name: 'Contest6',
+                slug: 'contest6',
                 description: 'Description 6',
                 end_at: '2017-06-25 15:13:26-00'
             })

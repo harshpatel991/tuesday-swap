@@ -3,23 +3,13 @@ const Code = require('../models/Code');
 const randomLorem = require('random-lorem');
 const knex = require('../database/db').knex;
 
-module.exports.getEnrollment = function (req, res) {
-    Enrollment.where('slug', req.params.enrollmentSlug).fetch({ required: true, withRelated: ['codes', 'seekings'] })
-        .then(function (enrollment) {
-            res.send(enrollment);
-        })
-        .catch(function (err) {
-            res.status(500).json({status: "Database Error" + err});
-        });
-};
-
 function formatCodesToInsert(enrollmentId, codes) {
     let codesToInsert = [];
     codes.forEach(function(codeObject) {
         codesToInsert.push({
             enrollment_id: enrollmentId,
             code_type_id: codeObject.code_type_id,
-            code: codeObject.code
+            code: codeObject.code //TODO: this should be encrypted
         })
     });
     return codesToInsert;

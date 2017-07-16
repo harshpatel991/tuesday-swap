@@ -18,8 +18,12 @@ const AdminController = require('./controllers/AdminController');
 const ContestController = require('./controllers/ContestController');
 const EnrollmentController = require('./controllers/EnrollmentController');
 const User = require('./models/User');
+const knexLogger = require('knex-logger');
+const knex = require('./database/db').knex;
 
 const app = express();
+
+app.use(knexLogger(knex));
 
 // parse application/json
 app.use(cookieParser());
@@ -36,7 +40,7 @@ app.use(passport.session());
 app.use(expressValidator());
 
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', '*'); //TODO: fix this
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,PUT,POST,DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers')
@@ -48,12 +52,13 @@ app.route('/auth/register').post(authHelpers.loginRedirect, AuthValidator.valida
 app.route('/auth/login').post(authHelpers.loginRedirect, AuthValidator.validatePostLogin, AuthController.postLogin);
 app.route('/auth/logout').get(authHelpers.loginRequired, AuthController.getLogout);
 
+app.route('/user/verify').get(authHelpers.loginRequired, UserController.postVerifyRedditUsername);
 app.route('/user').get(authHelpers.loginRequired, UserController.getUser);
 app.route('/admin').get(authHelpers.loginRequired, authHelpers.adminRequired, AdminController.getAdmin);
 
 app.route('/contest').post(authHelpers.loginRequired, authHelpers.adminRequired, ContestValidator.validatePostContest, ContestController.postContest);
+app.route('/contest/:contestId/:contestSlug').get(ContestController.getContest);
 
-app.route('/enrollment/:enrollmentSlug').get(EnrollmentController.getEnrollment);
 app.route('/enrollment').post(authHelpers.loginRequired, EnrollmentValidator.validatePostEnrollment, CodeValidator.validatePostCode, EnrollmentController.postEnrollment);
 
 app.listen(process.env.EXPRESS_PORT, function () {

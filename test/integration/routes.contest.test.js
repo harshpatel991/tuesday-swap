@@ -51,9 +51,10 @@ describe('routes : contest', () => {
                     res.status.should.eql(201);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Success');
-                    Contest.where( {id: res.body.contest} ).fetch()
+                    Contest.where( {id: res.body.contestId} ).fetch()
                         .then((contest) => {
-                            contest.id.should.eql(res.body.contest);
+                            contest.id.should.eql(res.body.contestId);
+                            contest.get("slug").should.eql("new-contest");
                             contest.get("name").should.eql("New Contest");
                             contest.get("description").should.eql("This is the description for new contest");
                             moment(contest.get("end_at")).format().should.eql(moment("3017-06-25 15:13:26-00").format());
@@ -133,4 +134,43 @@ describe('routes : contest', () => {
         });
     });
 
+
+    describe('GET /contest/:contestId/:contestSlug', () => {
+        it('should get a contest', (done) => {
+            chai.request(server)
+                .get('/contest/1/contest1')
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.body.id.should.eql(1);
+                    res.body.name.should.eql("Contest1");
+                    res.body.slug.should.eql("contest1");
+                    res.body.description.should.eql("Description 1");
+                    res.body.end_at.should.eql("3017-06-25T15:13:26.000Z");
+                    res.body.enrollments.forEach(function(enrollment) {
+                        enrollment.id.should.eql(1);
+                        enrollment.slug.should.eql("test_enrollment");
+                        enrollment.user_id.should.eql(3);
+                        enrollment.contest_id.should.eql(1);
+                        should.not.exist(enrollment.should_give_away_codes);
+
+                        const code = enrollment.codes[0];
+                        code.id.should.eql(1);
+                        code.enrollment_id.should.eql(1);
+                        code.code_type_id.should.eql(1);
+                        code.taken.should.eql(false);
+                        should.not.exist(code.code);
+                        should.not.exist(code.taken_by);
+
+                        const seeking = enrollment.seekings[0];
+                        seeking.id.should.eql(1);
+                        seeking.enrollment_id.should.eql(1);
+                        seeking.code_type_id.should.eql(1);
+                        seeking.num_times_satisfied.should.eql(0);
+                    });
+
+                    done();
+                });
+        });
+    });
 });
