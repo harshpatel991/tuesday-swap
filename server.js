@@ -20,10 +20,12 @@ const EnrollmentController = require('./controllers/EnrollmentController');
 const User = require('./models/User');
 const knexLogger = require('knex-logger');
 const knex = require('./database/db').knex;
+const helmet = require('helmet');
 
 const app = express();
 
 app.use(knexLogger(knex));
+app.use(helmet());
 
 // parse application/json
 app.use(cookieParser());

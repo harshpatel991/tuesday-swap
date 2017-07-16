@@ -80,8 +80,8 @@ describe('routes : enrollment', () => {
                             enrollment.codes.length.should.eql(3);
                             enrollment.codes.forEach((code, codeIndex)=> {
                                 code.enrollment_id.should.eql(res.body.enrollmentId);
-                                code.code_type_id.should.eql(codeIndex+9);
-                                code.code.should.eql("this_is_a_code" + (codeIndex+1));
+                                code.code_type_id.should.eql(11-codeIndex);
+                                code.code.should.eql("this_is_a_code" + (3-codeIndex));
                                 code.taken.should.eql(false);
                                 should.equal(code.taken_by, null);
                             });
