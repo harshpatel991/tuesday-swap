@@ -27,7 +27,12 @@ module.exports.postLogin = function (req, res, next) {
 
 module.exports.getLogout = function (req, res, next) {
     req.logout();
-    handleResponse(res, 200, 'Success');
+    req.session.destroy(function (err) {
+        if (!err) {
+            res.status(200).clearCookie('connect.sid', {path: '/'}).clearCookie('loggedIn', {path: '/'}).json({status: "Success"});
+        }
+    });
+    console.log("Error logging out");
 };
 
 function handleLogin(req, res, err, user, info) {
@@ -40,7 +45,7 @@ function handleLogin(req, res, err, user, info) {
             if (err) {
                 handleResponse(res, 500, 'Error');
             }
-            handleResponse(res, 200, 'Success');
+            res.status(200).cookie('loggedIn', true, { httpOnly: false }).json({status: "Success"});
         });
     }
 }

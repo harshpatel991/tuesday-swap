@@ -3,27 +3,14 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import "./styles/index.css";
 import "bootstrap/dist/css/bootstrap.css";
-import {BrowserRouter, Route} from "react-router-dom";
-import LoginComponent from "./pages/LoginComponent";
-import HomeComponent from "./pages/HomeComponent";
-import NotFoundComponent from "./pages/NotFoundComponent";
-import {Switch} from "react-router";
-import RegisterComponent from "./pages/RegisterComponent";
-import EnrollmentComponent from "./pages/EnrollmentComponent";
-
+import {BrowserRouter} from "react-router-dom";
+import { CookiesProvider} from 'react-cookie';
 
 ReactDOM.render(
     <BrowserRouter>
-        <App>
-            <Switch>
-            <Route exact path='/' component={HomeComponent}/>
-            <Route exact path='/login' component={LoginComponent}/>
-            <Route exact path='/register' component={RegisterComponent}/>
-            <Route exact path='/shareable/:enrollmentSlug' component={EnrollmentComponent}/>
-            <Route path='*' component={NotFoundComponent}/>
-            </Switch>
-        </App>
+        <CookiesProvider>
+            <App/>
+        </CookiesProvider>
     </BrowserRouter>,
     document.getElementById('root')
 );
-

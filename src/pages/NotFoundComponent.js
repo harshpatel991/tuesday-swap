@@ -7,7 +7,7 @@ class NotFoundComponent extends Component {
             <Container fluid="true" >
                 <Row>
                     <Col className="text-center hero-background">
-                        <img className="mx-auto d-block" src="/images/swap-icon.png" width="100px"/>
+                        <img className="mx-auto d-block" src="/images/swap-icon.png" width="100px" alt="icon"/>
                         <h1>404 Not Found</h1>
                     </Col>
                 </Row>

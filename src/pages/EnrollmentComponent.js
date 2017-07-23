@@ -13,7 +13,7 @@ class EnrollmentComponent extends Component {
     componentDidMount() {
         var _this = this;
         this.serverRequest =
-            axios.get("http://localhost:3001/enrollment/" + this.props.match.params.enrollmentSlug)
+            axios.get("/api/enrollment/" + this.props.match.params.enrollmentId + "/" + this.props.match.params.enrollmentSlug)
                 .then(function (result) {
                     _this.setState({
                         enrollment: result.data
@@ -33,7 +33,7 @@ class EnrollmentComponent extends Component {
                 <Row>
                     <Col className="text-center enrollment-hero-background">
 
-                        <img className="mx-auto d-block" src="/images/swap-icon.png" width="100px"/>
+                        <img className="mx-auto d-block" src="/images/swap-icon.png" width="100px" alt=""/>
                         <h1>/u/Dude wants to swap codes</h1>
                         <pre>{JSON.stringify(this.state.enrollment)}</pre>
 
@@ -48,14 +48,14 @@ class EnrollmentComponent extends Component {
 
                 <Row>
                     <Col className="giving-away-background">
-                        <img className="mx-auto d-block explanationImage" src="/images/register.png"/>
+                        <img className="mx-auto d-block explanationImage" src="/images/register.png" alt=""/>
                         <h3 className="text-center">/u/dude is giving away</h3>
                         <h4>xyz</h4>
                         <h4>abc</h4>
                         <h4>123</h4>
                     </Col>
                     <Col className="wants-background">
-                        <img className="mx-auto d-block explanationImage" src="/images/add.png"/>
+                        <img className="mx-auto d-block explanationImage" src="/images/add.png" alt=""/>
                         <h3 className="text-center">/u/dude wants</h3>
                         <h4>abc</h4>
                         <h4>123</h4>
