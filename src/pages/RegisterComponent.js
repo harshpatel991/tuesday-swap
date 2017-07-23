@@ -2,6 +2,11 @@ import React, {Component} from "react";
 import {Col, Container, Row} from "reactstrap";
 
 class RegisterComponent extends Component {
+
+    componentDidMount() {
+        this.props.refreshLoggedInState();
+    }
+
     render() {
         return (
             <Container fluid="true" >

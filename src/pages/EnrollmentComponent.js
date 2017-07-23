@@ -12,6 +12,7 @@ class EnrollmentComponent extends Component {
 
     componentDidMount() {
         var _this = this;
+        this.props.refreshLoggedInState();
         this.serverRequest =
             axios.get("/api/enrollment/" + this.props.match.params.enrollmentId + "/" + this.props.match.params.enrollmentSlug)
                 .then(function (result) {
