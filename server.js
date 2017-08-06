@@ -42,17 +42,15 @@ app.use(passport.session());
 app.use(expressValidator());
 
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*'); //TODO: fix this
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,PUT,POST,DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers')
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
     res.setHeader('Cache-Control', 'no-cache');
     next();
 });
 
 app.route('/auth/register').post(authHelpers.loginRedirect, AuthValidator.validatePostRegister, AuthController.postRegister);
 app.route('/auth/login').post(authHelpers.loginRedirect, AuthValidator.validatePostLogin, AuthController.postLogin);
-app.route('/auth/logout').get(authHelpers.loginRequired, AuthController.getLogout);
+app.route('/auth/logout').get(AuthController.getLogout);
 
 app.route('/user/verify').get(authHelpers.loginRequired, UserController.postVerifyRedditUsername);
 app.route('/user').get(authHelpers.loginRequired, UserController.getUser);

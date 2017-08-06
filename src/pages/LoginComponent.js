@@ -7,7 +7,7 @@ class LoginComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: '', //TODO: get and set errors
+            email: '',
             password: ''
         };
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -24,8 +24,8 @@ class LoginComponent extends Component {
                         <h2>Login</h2>
 
                         <form onSubmit={this.handleSubmit}>
-                            <Input placeholder="email" value={this.state.email} onChange={this.updateEmailValue} />
-                            <Input placeholder="password" type="password" value={this.state.password} onChange={this.updatePasswordValue} />
+                            <Input id="email" placeholder="email" value={this.state.email} onChange={this.updateEmailValue} />
+                            <Input id="password" placeholder="password" type="password" value={this.state.password} onChange={this.updatePasswordValue} />
                             <Button color="primary">Submit</Button>
                             <p>Already have an account? <Link to={'/login'}>Log in</Link></p>
                         </form>

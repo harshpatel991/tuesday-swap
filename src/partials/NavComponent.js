@@ -28,6 +28,9 @@ class NavComponent extends Component {
                     <Collapse isOpen={this.state.isOpen} navbar>
                         <Nav className="ml-auto" navbar>
                             {this.props.isLoggedIn ? <LoggedInButtonsComponent refreshLoggedInState={this.props.refreshLoggedInState}/> : <LoginRegisterButtonsComponent/>}
+                            <NavItem>
+                                <Link className="btn btn-default" role="button" to="/contest/1/blah">Contest 1</Link>
+                            </NavItem>
                         </Nav>
                     </Collapse>
                 </Navbar>

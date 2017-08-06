@@ -134,7 +134,6 @@ describe('routes : contest', () => {
         });
     });
 
-
     describe('GET /contest/:contestId/:contestSlug', () => {
         it('should get a contest', (done) => {
             chai.request(server)
@@ -147,27 +146,62 @@ describe('routes : contest', () => {
                     res.body.slug.should.eql("contest1");
                     res.body.description.should.eql("Description 1");
                     res.body.end_at.should.eql("3017-06-25T15:13:26.000Z");
-                    res.body.enrollments.forEach(function(enrollment) {
-                        enrollment.id.should.eql(1);
-                        enrollment.slug.should.eql("test_enrollment");
-                        enrollment.user_id.should.eql(3);
-                        enrollment.contest_id.should.eql(1);
-                        should.not.exist(enrollment.should_give_away_codes);
 
-                        const code = enrollment.codes[0];
-                        code.id.should.eql(1);
-                        code.enrollment_id.should.eql(1);
-                        code.code_type_id.should.eql(1);
-                        code.taken.should.eql(false);
-                        should.not.exist(code.code);
-                        should.not.exist(code.taken_by);
+                    res.body.codeTypes.length.should.eql(6);
+                    res.body.codeTypes[0].id.should.eql(1);
+                    res.body.codeTypes[1].id.should.eql(2);
+                    res.body.codeTypes[2].id.should.eql(3);
+                    res.body.codeTypes[3].id.should.eql(4);
+                    res.body.codeTypes[4].id.should.eql(5);
+                    res.body.codeTypes[5].id.should.eql(6);
 
-                        const seeking = enrollment.seekings[0];
-                        seeking.id.should.eql(1);
-                        seeking.enrollment_id.should.eql(1);
-                        seeking.code_type_id.should.eql(1);
-                        seeking.num_times_satisfied.should.eql(0);
-                    });
+                    res.body.codeTypes[0].contest_id.should.eql(1);
+                    res.body.codeTypes[1].contest_id.should.eql(1);
+                    res.body.codeTypes[2].contest_id.should.eql(1);
+                    res.body.codeTypes[3].contest_id.should.eql(1);
+                    res.body.codeTypes[4].contest_id.should.eql(1);
+                    res.body.codeTypes[5].contest_id.should.eql(1);
+
+                    res.body.codeTypes[0].name.should.eql("Code Type 1");
+                    res.body.codeTypes[1].name.should.eql("Code Type 2");
+                    res.body.codeTypes[2].name.should.eql("Code Type 3");
+                    res.body.codeTypes[3].name.should.eql("Code Type 4");
+                    res.body.codeTypes[4].name.should.eql("Code Type 5");
+                    res.body.codeTypes[5].name.should.eql("Code Type 6");
+
+                    res.body.codeTypes[0].image.should.eql("/code_type_1.jpg");
+                    res.body.codeTypes[1].image.should.eql("/code_type_2.jpg");
+                    res.body.codeTypes[2].image.should.eql("/code_type_3.jpg");
+                    res.body.codeTypes[3].image.should.eql("/code_type_4.jpg");
+                    res.body.codeTypes[4].image.should.eql("/code_type_5.jpg");
+                    res.body.codeTypes[5].image.should.eql("/code_type_6.jpg");
+
+                    res.body.enrollments.length.should.eql(4);
+                    res.body.enrollments[0].id.should.eql(4);
+                    res.body.enrollments[0].slug.should.eql("test_enrollment4");
+                    res.body.enrollments[0].user_id.should.eql(6);
+                    should.not.exist(res.body.enrollments[0].should_give_away_codes);
+
+                    res.body.enrollments[0].codes.length.should.eql(1);
+                    res.body.enrollments[0].codes[0].id.should.eql(6);
+                    res.body.enrollments[0].codes[0].enrollment_id.should.eql(4);
+                    res.body.enrollments[0].codes[0].code_type_id.should.eql(1);
+                    res.body.enrollments[0].codes[0].taken.should.eql(false);
+                    res.body.enrollments[0].codes[0].codeType.id.should.eql(1);
+                    res.body.enrollments[0].codes[0].codeType.name.should.eql("Code Type 1");
+                    res.body.enrollments[0].codes[0].codeType.image.should.eql("/code_type_1.jpg");
+                    should.not.exist(res.body.enrollments[0].codes[0].code);
+                    should.not.exist(res.body.enrollments[0].codes[0].taken_by);
+
+                    res.body.enrollments[0].seekings.length.should.eql(1);
+                    res.body.enrollments[0].seekings[0].id.should.eql(6);
+                    res.body.enrollments[0].seekings[0].enrollment_id.should.eql(4);
+                    res.body.enrollments[0].seekings[0].code_type_id.should.eql(1);
+                    should.not.exist(res.body.enrollments[0].seekings[0].num_times_satisfied);
+
+                    res.body.enrollments[0].seekings[0].codeType.id.should.eql(1);
+                    res.body.enrollments[0].seekings[0].codeType.name.should.eql("Code Type 1");
+                    res.body.enrollments[0].seekings[0].codeType.image.should.eql("/code_type_1.jpg");
 
                     done();
                 });

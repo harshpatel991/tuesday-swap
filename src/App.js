@@ -8,6 +8,9 @@ import RegisterComponent from "./pages/RegisterComponent";
 import EnrollmentComponent from "./pages/EnrollmentComponent";
 import NotFoundComponent from "./pages/NotFoundComponent";
 import ProfileComponent from "./pages/ProfileComponent";
+import ContestComponent from "./pages/ContestComponent";
+
+import "./styles/index.css";
 
 class App extends Component {
     constructor(props) {
@@ -26,42 +29,45 @@ class App extends Component {
     render() {
         return (<div>
             <NavComponent isLoggedIn={this.state.isLoggedIn} refreshLoggedInState={this.refreshLoggedInState} />
-            <Switch>
-                <Route exact path='/' render={(props) => (
-                    <HomeComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>)}/>
-                <Route exact path='/login' render={(props) => !this.state.isLoggedIn ? (
-                    <LoginComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>):
-                    (
-                    <Redirect to={{
-                        pathname: '/',
-                        state: { from: props.location }
-                    }}/>
-                    )
-                }/>
-                <Route exact path='/register' render={(props) => !this.state.isLoggedIn ? (
-                    <RegisterComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>) :
-                    (
+            <div>
+                <Switch>
+                    <Route exact path='/' render={(props) => (
+                        <HomeComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>)}/>
+                    <Route exact path='/login' render={(props) => !this.state.isLoggedIn ? (
+                        <LoginComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>):
+                        (
                         <Redirect to={{
                             pathname: '/',
                             state: { from: props.location }
                         }}/>
-                    )
-                }/>
-                <Route exact path='/profile' render={(props) => this.state.isLoggedIn ? (
-                    <ProfileComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>):
-                    (
-                        <Redirect to={{
-                            pathname: '/login',
-                            state: { from: props.location }
-                        }}/>
-                    )
-
-                }/>
-                <Route exact path='/:enrollmentId/:enrollmentSlug' render={(props) => (
-                    <EnrollmentComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>)}/>
-                <Route path='*' render={(props) => (
-                    <NotFoundComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>)}/>
-            </Switch>
+                        )
+                    }/>
+                    <Route exact path='/register' render={(props) => !this.state.isLoggedIn ? (
+                        <RegisterComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>) :
+                        (
+                            <Redirect to={{
+                                pathname: '/',
+                                state: { from: props.location }
+                            }}/>
+                        )
+                    }/>
+                    <Route exact path='/profile' render={(props) => this.state.isLoggedIn ? (
+                        <ProfileComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>):
+                        (
+                            <Redirect to={{
+                                pathname: '/login',
+                                state: { from: props.location }
+                            }}/>
+                        )
+                    }/>
+                    <Route exact path='/contest/:contestId/:contestSlug' render={(props) => (
+                        <ContestComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>)}/>
+                    <Route exact path='/:enrollmentId/:enrollmentSlug' render={(props) => (
+                        <EnrollmentComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>)}/>
+                    <Route path='*' render={(props) => (
+                        <NotFoundComponent {...props} refreshLoggedInState={this.refreshLoggedInState}/>)}/>
+                </Switch>
+            </div>
         </div>)
     }
 

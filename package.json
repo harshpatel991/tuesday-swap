@@ -38,10 +38,15 @@
   "devDependencies": {
     "chai": "^4.0.2",
     "chai-http": "^3.0.0",
+    "enzyme": "^2.9.1",
+    "jsdom": "^11.1.0",
     "mocha": "^3.4.2",
+    "mocha-steps": "^1.0.2",
     "passport-stub": "^1.1.1",
     "react-devtools": "^2.5.0",
-    "react-scripts": "1.0.7"
+    "react-dom": "^15.6.1",
+    "react-scripts": "1.0.7",
+    "react-test-renderer": "^15.6.1"
   },
   "scripts": {
     "start": "react-scripts start",

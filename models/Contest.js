@@ -1,5 +1,6 @@
 var db = require('../database/db');
 const Enrollment = require('./Enrollment');
+const CodeType = require('./CodeType');
 
 module.exports = db.bookshelf.Model.extend({
     tableName: 'contests',
@@ -7,4 +8,7 @@ module.exports = db.bookshelf.Model.extend({
     enrollments: function() {
         return this.hasMany(Enrollment)
     },
+    codeTypes: function () {
+        return this.hasMany(CodeType)
+    }
 });

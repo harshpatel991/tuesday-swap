@@ -26,6 +26,7 @@ function formatSeekingToInsert(enrollmentId, seeking) {
     return seekingToInsert;
 }
 
+//TODO: require is redditVerified=true
 module.exports.postEnrollment = function (req, res) {
     let theEnrollmentId;
     knex.transaction(function (t) {

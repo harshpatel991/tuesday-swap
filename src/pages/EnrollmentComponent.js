@@ -13,19 +13,14 @@ class EnrollmentComponent extends Component {
     componentDidMount() {
         var _this = this;
         this.props.refreshLoggedInState();
-        this.serverRequest =
-            axios.get("/api/enrollment/" + this.props.match.params.enrollmentId + "/" + this.props.match.params.enrollmentSlug)
-                .then(function (result) {
-                    _this.setState({
-                        enrollment: result.data
-                    });
-                }).catch(function (error) { // any error will go here
-                    console.log(error);
+        axios.get("/api/enrollment/" + this.props.match.params.enrollmentId + "/" + this.props.match.params.enrollmentSlug)
+            .then(function (result) {
+                _this.setState({
+                    enrollment: result.data
                 });
-    };
-
-    componentWillUnmount() {
-        this.serverRequest.abort();
+            }).catch(function (error) { // any error will go here
+                console.log(error); //TODO: show error to user
+            });
     };
 
     render() {

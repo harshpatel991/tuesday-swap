@@ -1,0 +1,47 @@
+.sidebar-background {
+    min-height: 300px;
+}
+
+.white-font {
+    color: #fff;
+}
+
+.card-block {
+    padding: 1rem;
+}
+
+.card {
+    background-color: #2d313e;
+    margin-bottom: 30px;
+    border-width: 0;
+}
+
+.card-text {
+    margin-bottom: 0;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+.list-group-item {
+    background-color: #2d313e;
+    padding: 0;
+}
+
+.list-group-flush .list-group-item {
+    background-color: #4e5365;
+    border-width: 0;
+}
+
+.left-border {
+    padding: 10px 8px;
+    margin-bottom: 5px;
+    background-color: #f7f7f7;
+    color: #fff;
+}
+
+.code-icon {
+    padding: 10px;
+    max-width: 60px;
+    max-height: 50px;
+    overflow: hidden;
+}

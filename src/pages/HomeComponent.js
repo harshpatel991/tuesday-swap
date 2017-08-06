@@ -5,13 +5,13 @@ import "../styles/Home.css";
 class HomeComponent extends Component {
     render() {
         return (
-            <Container fluid="true" >
+            <Container fluid={true} >
                 <Row>
                     <Col className="text-center hero-background">
 
                         <img className="mx-auto d-block" src="/images/swap-icon.png" width="100px" alt=""/>
-                        <h1>Swap Codes Without the Hassle</h1>
-                        <h5>Tuesday Swap ensures that you can trade codes with other users without worrying about getting scammed.</h5>
+                        <h1>T-Mobile Tuesdays Marketplace</h1>
+                        <h5>Trade codes with other users without worrying about getting scammed.</h5>
                         <div>
                             <Button tag="a" color="primary" size="lg" href="/register">
                                 Register Now

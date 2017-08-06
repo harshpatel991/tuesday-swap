@@ -44,6 +44,7 @@ describe('routes : auth', () => {
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Success');
                     registerCookie = res.headers['set-cookie'].pop().split(';')[0];
+                    res.headers['set-cookie'].pop().split(';')[0].should.eql("loggedIn=true");
                     done();
                 })
         });
@@ -54,7 +55,7 @@ describe('routes : auth', () => {
                     should.not.exist(err);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
-                    res.body.user.should.eql(4);
+                    res.body.user.should.eql(7);
                     done();
                 });
         });
@@ -326,18 +327,22 @@ describe('routes : auth', () => {
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
                     res.body.status.should.eql('Success');
+                    res.headers['set-cookie'].pop().split(';')[0].should.eql("loggedIn=");
+                    res.headers['set-cookie'].pop().split(';')[0].should.eql("connect.sid=");
                     done();
                 });
         });
 
-        it('should throw an error if a user is not logged in', (done) => {
+        it('should log out even if already logged out', (done) => {
             chai.request(server)
                 .get('/auth/logout')
                 .end((err, res) => {
-                    should.exist(err);
-                    res.status.should.eql(401);
+                    res.status.should.eql(200);
                     res.type.should.eql('application/json');
-                    res.body.status.should.eql('Please log in');
+                    res.body.status.should.eql('Success');
+
+                    res.headers['set-cookie'].pop().split(';')[0].should.eql("loggedIn=");
+                    res.headers['set-cookie'].pop().split(';')[0].should.eql("connect.sid=");
                     done();
                 });
         });

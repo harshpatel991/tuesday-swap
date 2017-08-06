@@ -32,5 +32,38 @@ exports.seed = function(knex, Promise) {
                 admin: false
             });
         })
+        .then(function() {
+            const salt = bcrypt.genSaltSync();
+            const hash = bcrypt.hashSync('verified4', salt);
+            return knex('users').insert({
+                email_address: 'verified4@test.com',
+                password: hash,
+                reddit_username: 'reddit_verified4',
+                is_reddit_verified: true,
+                admin: false
+            });
+        })
+        .then(function() {
+            const salt = bcrypt.genSaltSync();
+            const hash = bcrypt.hashSync('verified5', salt);
+            return knex('users').insert({
+                email_address: 'verified5@test.com',
+                password: hash,
+                reddit_username: 'reddit_verified5',
+                is_reddit_verified: true,
+                admin: false
+            });
+        })
+        .then(function() {
+            const salt = bcrypt.genSaltSync();
+            const hash = bcrypt.hashSync('verified6', salt);
+            return knex('users').insert({
+                email_address: 'verified6@test.com',
+                password: hash,
+                reddit_username: 'reddit_verified6',
+                is_reddit_verified: true,
+                admin: false
+            });
+        })
 };
 

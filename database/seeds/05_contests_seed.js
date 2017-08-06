@@ -65,7 +65,7 @@ exports.seed = function(knex, Promise) {
                 end_at: '3011-06-25 15:13:26-00'
             });
         })
-
+        //-------------------------------------------------
         .then(function() {
             return knex('contests').insert({
                 name: 'Contest2',
@@ -84,7 +84,7 @@ exports.seed = function(knex, Promise) {
                 end_at: '3013-06-25 15:13:26-00'
             });
         })
-
+        //-------------------------------------------------
         .then(function() {
             return knex('contests').insert({
                 name: 'Contest3',
@@ -103,7 +103,7 @@ exports.seed = function(knex, Promise) {
                 end_at: '3013-06-25 15:13:26-00'
             });
         })
-
+        //-------------------------------------------------
         .then(function() {
             return knex('contests').insert({
                 name: 'Contest4',
@@ -162,7 +162,7 @@ exports.seed = function(knex, Promise) {
                 end_at: '3013-06-25 15:13:26-00'
             });
         })
-
+        //-------------------------------------------------
         .then(function() {
             return knex('contests').insert({
                 name: 'Contest5',
@@ -181,7 +181,6 @@ exports.seed = function(knex, Promise) {
                 end_at: '3013-06-25 15:13:26-00'
             });
         })
-
         .then(function() {
             return knex('code_types').insert({
                 contest_id: 5,
@@ -192,7 +191,7 @@ exports.seed = function(knex, Promise) {
                 end_at: '3013-06-25 15:13:26-00'
             });
         })
-
+        //-------------------------------------------------
         .then(function() {
             return knex('contests').insert({ // a contest that has already expired
                 name: 'Contest6',
